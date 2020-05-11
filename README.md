@@ -1,2 +1,4 @@
-# jwt-spring-boot-starter
-Bespoke JWT login support
+# JWT Spring Boot Starter 
+
+This provides easy integration for a JWT login endpoint.
+
