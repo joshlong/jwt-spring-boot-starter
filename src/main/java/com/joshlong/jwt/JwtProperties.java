@@ -6,19 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 @Data
-@ConstructorBinding
 @RequiredArgsConstructor
+@ConstructorBinding
 @ConfigurationProperties("jwt")
-public class JwtProperties {
-
-	private final String secret;
-
-	private final String issuer;
-
-	private final String type;
-
-	private final String audience;
-
-	private final String loginUrl;
-
+class JwtProperties {
+    private final String tokenUrl;
 }
