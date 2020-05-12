@@ -13,25 +13,24 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
  */
 public class JwtDsl extends AbstractHttpConfigurer<JwtDsl, HttpSecurity> {
 
-    private String tokenUrl = "/token";
+	private String tokenUrl = "/token";
 
-    public JwtDsl tokenUrl(String url) {
-        this.tokenUrl = url;
-        return this;
-    }
+	public JwtDsl tokenUrl(String url) {
+		this.tokenUrl = url;
+		return this;
+	}
 
-    @Override
-    public void init(HttpSecurity builder) throws Exception {
+	@Override
+	public void init(HttpSecurity builder) throws Exception {
 
-        builder
-                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())
-                .authorizeRequests(ae -> ae.anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
-    }
+		builder.csrf(AbstractHttpConfigurer::disable)
+				// .authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())
+				.authorizeRequests(ae -> ae.anyRequest().authenticated()).httpBasic(Customizer.withDefaults())
+				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+	}
 
-    public static JwtDsl jwtDsl() {
-        return new JwtDsl();
-    }
+	public static JwtDsl jwtDsl() {
+		return new JwtDsl();
+	}
+
 }

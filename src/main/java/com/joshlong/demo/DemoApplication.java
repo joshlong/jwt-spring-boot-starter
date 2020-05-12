@@ -20,39 +20,36 @@ import static java.util.Collections.singletonMap;
 @SpringBootApplication
 public class DemoApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+	}
+
 }
 
 @RestController
 class MessageController {
 
-    @GetMapping("/greetings")
-    Map<String, String> greet(Principal principal) {
-        return singletonMap("greeting", "Hello " + principal.getName() + "!");
-    }
+	@GetMapping("/greetings")
+	Map<String, String> greet(Principal principal) {
+		return singletonMap("greeting", "Hello " + principal.getName() + "!");
+	}
+
 }
 
 @Configuration
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.apply(jwtDsl());
-//        http.authorizeRequests(ae -> ae.anyRequest().authenticated());
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.apply(jwtDsl());
+		// http.authorizeRequests(ae -> ae.anyRequest().authenticated());
 
-    }
+	}
 
-    @Bean
-    InMemoryUserDetailsManager userDetailsManager() {
-        var user = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
-
+	@Bean
+	InMemoryUserDetailsManager userDetailsManager() {
+		var user = User.withDefaultPasswordEncoder().username("user").password("password").roles("USER").build();
+		return new InMemoryUserDetailsManager(user);
+	}
 
 }
