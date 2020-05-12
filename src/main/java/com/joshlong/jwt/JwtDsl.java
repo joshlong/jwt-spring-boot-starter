@@ -6,10 +6,18 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 
 /**
- * @author Rob Winch
- * @author Josh Long
  * <p>
- * https://docs.spring.io/spring-security/site/docs/5.4.0-M1/reference/html5/#jc-custom-dsls
+ * Supports a custom DSL for plugging <a href=
+ * "https://docs.spring.io/spring-security/site/docs/5.4.0-M1/reference/html5/#jc-custom-dsls">
+ * in JWT configuration for Servlet-based applications </a>.
+ * </P>
+ *
+ * You can specify a few properties on the classpath and then pull in the JWT DSL like
+ * this: <PRE>
+ * init(HttpSecurity builder){
+ *   builder.apply(jwtDsl().tokenUrl("/my-token-endpoint"));
+ * }
+ * </PRE>
  */
 public class JwtDsl extends AbstractHttpConfigurer<JwtDsl, HttpSecurity> {
 
