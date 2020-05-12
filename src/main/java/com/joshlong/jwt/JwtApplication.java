@@ -27,7 +27,7 @@ import static org.springframework.web.servlet.function.RouterFunctions.route;
 
 /**
  * JWT support that is 95% based on Rob Winch's epic code. If there are any faults, they
- * are surely mine.
+ * are surely Josh's.
  *
  * @author Rob Winch
  * @author Josh Long
