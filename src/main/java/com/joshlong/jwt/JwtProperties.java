@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @RequiredArgsConstructor
 @ConstructorBinding
 @ConfigurationProperties("jwt")
-class JwtProperties {
+public class JwtProperties {
 
 	private final String tokenUrl = "/token";
 
