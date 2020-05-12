@@ -32,8 +32,8 @@ class JwtTokenAutoConfiguration {
 	}
 
 	@Bean
-	RSAKey rsaKey() throws Exception {
-		return new RSAKeyGenerator(2048).keyID("123").generate();
+	RSAKey rsaKey(JwtProperties properties) throws Exception {
+		return new RSAKeyGenerator(2048).keyID(properties.getKey()).generate();
 	}
 
 	@Bean
@@ -42,16 +42,16 @@ class JwtTokenAutoConfiguration {
 	}
 
 	@Bean
-	RouterFunction<ServerResponse> jwtTokenEndpoint(JWSSigner signer) {
+	RouterFunction<ServerResponse> jwtTokenEndpoint(JwtProperties properties, JWSSigner signer) {
 		return route()//
-				.POST("/token", serverRequest -> {
+				.POST(properties.getTokenUrl(), serverRequest -> {
 					Optional<Principal> pp = serverRequest.principal();
 					Assert.isTrue(pp.isPresent(), "the principal must be non-null!");
 					var principal = pp.get();
 					var now = Instant.now();
 					var claims = new JWTClaimsSet.Builder()//
-							.issuer("http://localhost:8080")//
-							.audience("http://localhost:8080")//
+							.issuer(properties.getIssuer())//
+							.audience(properties.getAudience())//
 							.expirationTime(Date.from(now.plus(Duration.ofDays(2))))//
 							.issueTime(Date.from(now))//
 							.subject(principal.getName())//
@@ -61,14 +61,8 @@ class JwtTokenAutoConfiguration {
 					jwsObject.sign(signer);
 					var token = jwsObject.serialize();
 					return ServerResponse.ok().body(token);
-				}).build();
+				})//
+				.build();
 	}
 
 }
-
-/*
- * @RestController class MessageController {
- *
- * @GetMapping("/") public String message(Principal principal) { return "Hello " +
- * principal.getName() + "!"; } }
- */

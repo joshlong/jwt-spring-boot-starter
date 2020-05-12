@@ -11,6 +11,12 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConfigurationProperties("jwt")
 class JwtProperties {
 
-	private final String tokenUrl;
+	private final String tokenUrl = "/token";
+
+	private final String issuer = "http://localhost:8080";
+
+	private final String audience = "http://localhost:8080";
+
+	private final String key;
 
 }

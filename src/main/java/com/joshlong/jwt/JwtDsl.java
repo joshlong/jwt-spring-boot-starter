@@ -23,9 +23,8 @@ public class JwtDsl extends AbstractHttpConfigurer<JwtDsl, HttpSecurity> {
 	@Override
 	public void init(HttpSecurity builder) throws Exception {
 
-		builder.csrf(AbstractHttpConfigurer::disable)
-				// .authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())
-				.authorizeRequests(ae -> ae.anyRequest().authenticated()).httpBasic(Customizer.withDefaults())
+		builder.csrf(AbstractHttpConfigurer::disable).authorizeRequests(ae -> ae.anyRequest().authenticated())//
+				.httpBasic(Customizer.withDefaults())//
 				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 	}
 
