@@ -125,3 +125,20 @@ class JwtController {
 
     }
 }
+
+class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
+
+    @Override
+    public void init(HttpSecurity builder) throws Exception {
+        builder.csrf(AbstractHttpConfigurer::disable);
+    }
+
+    @Override
+    public void configure(HttpSecurity builder) throws Exception {
+
+    }
+
+    public static MyCustomDsl customDsl() {
+        return new MyCustomDsl();
+    }
+}
