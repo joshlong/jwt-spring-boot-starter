@@ -83,8 +83,9 @@ class DemoApplication {
 
 	@Bean
 	SecurityWebFilterChain authorization(ServerHttpSecurity httpSecurity) {
-		return httpSecurity.authorizeExchange(ae -> ae.anyExchange().authenticated())
-				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt).build();
+		return httpSecurity.authorizeExchange(ae -> ae.anyExchange().authenticated())//
+				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)//
+				.build();
 	}
 
 	@Data
