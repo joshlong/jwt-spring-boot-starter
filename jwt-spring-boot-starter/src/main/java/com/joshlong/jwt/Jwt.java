@@ -29,6 +29,14 @@ public class Jwt {
 				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
 	}
 
+	public static ServletJwtDsl servletJwtDsl() {
+		return new ServletJwtDsl().tokenUrl(DEFAULT_TOKEN_URL);
+	}
+
+	public static ServletJwtDsl servletJwtDsl(String loginUrl) {
+		return new ServletJwtDsl().tokenUrl(loginUrl);
+	}
+
 	public static class ServletJwtDsl extends AbstractHttpConfigurer<ServletJwtDsl, HttpSecurity> {
 
 		private String tokenUrl;
@@ -47,14 +55,6 @@ public class Jwt {
 					.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 		}
 
-	}
-
-	public static ServletJwtDsl servletJwtDsl() {
-		return new ServletJwtDsl().tokenUrl(DEFAULT_TOKEN_URL);
-	}
-
-	public static ServletJwtDsl servletJwtDsl(String loginUrl) {
-		return new ServletJwtDsl().tokenUrl(loginUrl);
 	}
 
 }

@@ -56,15 +56,6 @@ public class DemoApplication {
 		Assert.isTrue(response.getGreeting().equalsIgnoreCase("Hello " + USERNAME + "!"), "the strings must match!");
 	}
 
-	@Data
-	@AllArgsConstructor
-	@NoArgsConstructor
-	static class Greeting {
-
-		private String greeting;
-
-	}
-
 	@Bean
 	RouterFunction<ServerResponse> http() {
 		return route()
@@ -81,6 +72,15 @@ public class DemoApplication {
 				.roles("USER")//
 				.build()//
 		);
+	}
+
+	@Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	static class Greeting {
+
+		private String greeting;
+
 	}
 
 }
