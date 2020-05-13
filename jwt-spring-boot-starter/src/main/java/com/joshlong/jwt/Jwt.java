@@ -24,7 +24,9 @@ public class Jwt {
 	public static ServerHttpSecurity webfluxDsl(ServerHttpSecurity builder, String tokenUrl) {
 		return builder//
 				.csrf(ServerHttpSecurity.CsrfSpec::disable)
-				.authorizeExchange(ae -> ae.pathMatchers(tokenUrl).authenticated().anyExchange().permitAll())//
+				.authorizeExchange(ae -> ae.pathMatchers(tokenUrl).authenticated()//
+						.anyExchange().authenticated()//
+				)//
 				.httpBasic(Customizer.withDefaults())//
 				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
 	}
@@ -50,7 +52,10 @@ public class Jwt {
 		public void init(HttpSecurity builder) throws Exception {
 			builder//
 					.csrf(AbstractHttpConfigurer::disable)//
-					.authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())//
+					.authorizeRequests(ae -> ae//
+							.mvcMatchers(this.tokenUrl).authenticated()//
+							.anyRequest().authenticated()//
+					)//
 					.httpBasic(Customizer.withDefaults())//
 					.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 		}

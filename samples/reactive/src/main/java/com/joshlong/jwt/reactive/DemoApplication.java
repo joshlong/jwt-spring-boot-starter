@@ -98,11 +98,3 @@ class DemoApplication {
 	}
 
 }
-
-/*
- * @RestController class GreetingsRestController {
- *
- * @GetMapping(value = "/greetings") Mono<DemoApplication.Greeting>
- * greet(@AuthenticationPrincipal Principal principal) { return Mono.just(new
- * DemoApplication.Greeting("Hello " + principal.getName() + "!")); } }
- */
