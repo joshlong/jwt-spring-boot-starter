@@ -74,7 +74,6 @@ public class DemoApplication {
 	}
 
 	@Configuration
-	@Order(13000)
 	public static class MyConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
