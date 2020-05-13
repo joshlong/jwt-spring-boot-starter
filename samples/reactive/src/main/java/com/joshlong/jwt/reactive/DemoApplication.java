@@ -22,9 +22,6 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
-import static java.util.Collections.singletonMap;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
@@ -51,14 +48,15 @@ class DemoApplication {
 				.retrieve()//
 				.bodyToMono(String.class);
 
-		Mono<Greeting> greetingPublisher = token.flatMap(tokenString -> WebClient//
-				.builder()//
-				.build()//
-				.get()//
-				.uri("http://localhost:8080/greetings")//
-				.headers(httpHeaders -> httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString))//
-				.retrieve()//
-				.bodyToMono(Greeting.class));
+		Mono<String> greetingPublisher = token//
+				.flatMap(tokenString -> WebClient//
+						.builder()//
+						.build()//
+						.get()//
+						.uri("http://localhost:8080/greetings")//
+						.headers(httpHeaders -> httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString))//
+						.retrieve()//
+						.bodyToMono(String.class));
 		greetingPublisher.subscribe(log::info);
 
 	}
@@ -66,9 +64,12 @@ class DemoApplication {
 	@Bean
 	RouterFunction<ServerResponse> http() {
 		return route()//
-				.GET("/greetings",
-						request -> request.principal().flatMap(
-								p -> ok().body(singletonMap("greetings", "hello " + p.getName() + "!"), Map.class)))//
+				.GET("/greetings", request -> request//
+						.principal()//
+						.flatMap(p -> {//
+							var greeting = new Greeting("hello " + p.getName() + "!");
+							return ok().body(Mono.just(greeting), Greeting.class);
+						}))//
 				.build();
 	}
 
@@ -97,3 +98,11 @@ class DemoApplication {
 	}
 
 }
+
+/*
+ * @RestController class GreetingsRestController {
+ *
+ * @GetMapping(value = "/greetings") Mono<DemoApplication.Greeting>
+ * greet(@AuthenticationPrincipal Principal principal) { return Mono.just(new
+ * DemoApplication.Greeting("Hello " + principal.getName() + "!")); } }
+ */

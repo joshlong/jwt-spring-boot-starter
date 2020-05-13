@@ -24,7 +24,7 @@ public class Jwt {
 	public static ServerHttpSecurity webfluxDsl(ServerHttpSecurity builder, String tokenUrl) {
 		return builder//
 				.csrf(ServerHttpSecurity.CsrfSpec::disable)
-				.authorizeExchange(ae -> ae.pathMatchers(tokenUrl).authenticated())//
+				.authorizeExchange(ae -> ae.pathMatchers(tokenUrl).authenticated().anyExchange().permitAll())//
 				.httpBasic(Customizer.withDefaults())//
 				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
 	}

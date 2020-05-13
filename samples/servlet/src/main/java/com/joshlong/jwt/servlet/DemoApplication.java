@@ -24,7 +24,6 @@ import org.springframework.util.Assert;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
-import static java.util.Collections.singletonMap;
 import static org.springframework.web.servlet.function.RouterFunctions.route;
 import static org.springframework.web.servlet.function.ServerResponse.ok;
 
@@ -58,10 +57,11 @@ public class DemoApplication {
 
 	@Bean
 	RouterFunction<ServerResponse> http() {
-		return route()
-				.GET("/greetings",
-						r -> ok().body(singletonMap("greeting", "Hello " + r.principal().get().getName() + "!")))
-				.build();
+		return route().GET("/greetings", request -> {//
+			var p = request.principal().get();
+			var greeting = new Greeting("hello " + p.getName() + "!");
+			return ok().body(greeting);
+		}).build();
 	}
 
 	@Bean
