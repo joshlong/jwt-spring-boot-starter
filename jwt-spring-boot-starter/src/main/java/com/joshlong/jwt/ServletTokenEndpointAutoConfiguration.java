@@ -2,10 +2,14 @@ package com.joshlong.jwt;
 
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.jwk.RSAKey;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.util.Assert;
@@ -33,10 +37,25 @@ class ServletTokenEndpointAutoConfiguration {
 				.POST(properties.getTokenUrl(), serverRequest -> {
 					Optional<Principal> pp = serverRequest.principal();
 					Assert.isTrue(pp.isPresent(), "the principal must be non-null!");
-					String token = TokenUtils.buildTokenFor(properties, signer, pp.get());
+					var token = TokenUtils.buildTokenFor(properties, signer, pp.get());
 					return ServerResponse.ok().body(token);
 				})//
 				.build();
+	}
+
+	@Configuration
+	@RequiredArgsConstructor
+	@Order(99)
+	@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+	public static class ServletSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+		private final JwtProperties properties;
+
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			http.apply(Jwt.servletJwtDsl(this.properties.getTokenUrl()));
+		}
+
 	}
 
 }

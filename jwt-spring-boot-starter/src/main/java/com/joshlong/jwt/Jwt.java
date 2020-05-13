@@ -5,6 +5,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 
 /**
  * <p>
@@ -22,13 +23,10 @@ public class Jwt {
 	}
 
 	public static ServerHttpSecurity webfluxDsl(ServerHttpSecurity builder, String tokenUrl) {
-		return builder//
-				.csrf(ServerHttpSecurity.CsrfSpec::disable)
-				.authorizeExchange(ae -> ae.pathMatchers(tokenUrl).authenticated()//
-						.anyExchange().authenticated()//
-				)//
-				.httpBasic(Customizer.withDefaults())//
-				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
+		return builder.securityMatcher(new PathPatternParserServerWebExchangeMatcher(tokenUrl))
+				.csrf(ServerHttpSecurity.CsrfSpec::disable).authorizeExchange(ae -> ae.anyExchange().authenticated())//
+				.httpBasic(Customizer.withDefaults());
+
 	}
 
 	public static ServletJwtDsl servletJwtDsl() {
@@ -54,10 +52,9 @@ public class Jwt {
 					.csrf(AbstractHttpConfigurer::disable)//
 					.authorizeRequests(ae -> ae//
 							.mvcMatchers(this.tokenUrl).authenticated()//
-							.anyRequest().authenticated()//
 					)//
 					.httpBasic(Customizer.withDefaults())//
-					.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+			;
 		}
 
 	}

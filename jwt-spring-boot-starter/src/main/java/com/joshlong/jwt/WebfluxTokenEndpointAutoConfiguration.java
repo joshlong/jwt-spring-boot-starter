@@ -6,7 +6,9 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -22,6 +24,12 @@ class WebfluxTokenEndpointAutoConfiguration {
 	@Bean
 	NimbusReactiveJwtDecoder reactiveJwtDecoder(RSAKey rsaKey) throws Exception {
 		return NimbusReactiveJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+	}
+
+	@Bean
+	SecurityWebFilterChain configureAuthenticationForTokenEndpoint(JwtProperties properties,
+			ServerHttpSecurity httpSecurity) {
+		return Jwt.webfluxDsl(httpSecurity, properties.getTokenUrl()).build();
 	}
 
 	@Bean

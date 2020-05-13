@@ -1,11 +1,8 @@
 package com.joshlong.jwt.servlet;
 
-import com.joshlong.jwt.Jwt;
-import com.joshlong.jwt.JwtProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,9 +11,11 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -74,6 +73,18 @@ public class DemoApplication {
 		);
 	}
 
+	@Configuration
+	@Order(13000)
+	public static class MyConfig extends WebSecurityConfigurerAdapter {
+
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			http.authorizeRequests(ae -> ae.anyRequest().authenticated())
+					.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+		}
+
+	}
+
 	@Data
 	@AllArgsConstructor
 	@NoArgsConstructor
@@ -81,19 +92,6 @@ public class DemoApplication {
 
 		private String greeting;
 
-	}
-
-}
-
-@Configuration
-@RequiredArgsConstructor
-class ServletSecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-	private final JwtProperties properties;
-
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.apply(Jwt.servletJwtDsl(this.properties.getTokenUrl()));
 	}
 
 }

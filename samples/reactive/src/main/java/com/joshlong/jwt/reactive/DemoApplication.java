@@ -1,7 +1,5 @@
 package com.joshlong.jwt.reactive;
 
-import com.joshlong.jwt.Jwt;
-import com.joshlong.jwt.JwtProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -84,8 +82,9 @@ class DemoApplication {
 	}
 
 	@Bean
-	SecurityWebFilterChain authorization(JwtProperties properties, ServerHttpSecurity httpSecurity) {
-		return Jwt.webfluxDsl(httpSecurity, properties.getTokenUrl()).build();
+	SecurityWebFilterChain authorization(ServerHttpSecurity httpSecurity) {
+		return httpSecurity.authorizeExchange(ae -> ae.anyExchange().authenticated())
+				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt).build();
 	}
 
 	@Data
