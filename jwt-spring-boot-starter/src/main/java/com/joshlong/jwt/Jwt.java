@@ -1,5 +1,6 @@
 package com.joshlong.jwt;
 
+import lombok.Data;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,8 +30,13 @@ public class Jwt {
 
 	}
 
-	public static ServletJwtDsl servletJwtDsl(String loginUrl) {
+	@Deprecated
+	public static ServletJwtDsl webmvcJwtDsl(String loginUrl) {
 		return new ServletJwtDsl().tokenUrl(loginUrl);
+	}
+
+	public static ServletJwtDsl servletJwtDsl(String loginUrl) {
+		return webmvcJwtDsl(loginUrl);
 	}
 
 	public static class ServletJwtDsl extends AbstractHttpConfigurer<ServletJwtDsl, HttpSecurity> {

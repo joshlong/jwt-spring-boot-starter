@@ -11,7 +11,7 @@
     <artifactId>samples</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>reactive</module>
-        <module>servlet</module>
+        <module>webflux</module>
+        <module>webmvc</module>
     </modules>
 </project>  

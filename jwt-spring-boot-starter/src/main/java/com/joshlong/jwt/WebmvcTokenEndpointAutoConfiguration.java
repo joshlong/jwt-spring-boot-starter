@@ -24,7 +24,7 @@ import static org.springframework.web.servlet.function.RouterFunctions.route;
 @Configuration
 @AutoConfigureAfter(JwtTokenAutoConfiguration.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-class ServletTokenEndpointAutoConfiguration {
+class WebmvcTokenEndpointAutoConfiguration {
 
 	@Bean
 	JwtDecoder jwtDecoder(RSAKey rsaKey) throws Exception {
@@ -47,7 +47,7 @@ class ServletTokenEndpointAutoConfiguration {
 	@RequiredArgsConstructor
 	@Order(99)
 	@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-	public static class ServletSecurityConfiguration extends WebSecurityConfigurerAdapter {
+	public static class WebmvcSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		private final JwtProperties properties;
 
