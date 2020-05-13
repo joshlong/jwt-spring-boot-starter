@@ -26,58 +26,57 @@ import org.springframework.web.servlet.function.ServerResponse;
 
 import static java.util.Collections.singletonMap;
 import static org.springframework.web.servlet.function.RouterFunctions.route;
+import static org.springframework.web.servlet.function.ServerResponse.ok;
 
 @Log4j2
 @SpringBootApplication
 public class DemoApplication {
 
-	static final String USERNAME = "user";
-	static final String PASSWORD = "password";
+    static final String USERNAME = "user";
+    static final String PASSWORD = "password";
 
-	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
 
-	@EventListener(ApplicationReadyEvent.class)
-	public void servlet() {
-		var token = new RestTemplateBuilder()//
-				.basicAuthentication(USERNAME, PASSWORD)//
-				.build()//
-				.postForEntity("http://localhost:8080/token", null, String.class)//
-				.getBody();
-		var response = new RestTemplateBuilder()//
-				.defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token)//
-				.build()//
-				.getForEntity("http://localhost:8080/greetings", Greeting.class)//
-				.getBody();
-		log.info("token: " + token);
-		log.info("response: " + response);
-		Assert.isTrue(response.getGreeting().equalsIgnoreCase("Hello " + USERNAME + "!"), "the strings must match!");
-	}
+    @EventListener(ApplicationReadyEvent.class)
+    public void servlet() {
+        var token = new RestTemplateBuilder()//
+                .basicAuthentication(USERNAME, PASSWORD)//
+                .build()//
+                .postForEntity("http://localhost:8080/token", null, String.class)//
+                .getBody();
+        var response = new RestTemplateBuilder()//
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token)//
+                .build()//
+                .getForEntity("http://localhost:8080/greetings", Greeting.class)//
+                .getBody();
+        log.info("token: " + token);
+        log.info("response: " + response);
+        Assert.isTrue(response.getGreeting().equalsIgnoreCase("Hello " + USERNAME + "!"), "the strings must match!");
+    }
 
-	@Data
-	@AllArgsConstructor
-	@NoArgsConstructor
-	static class Greeting {
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class Greeting {
 
-		private String greeting;
+        private String greeting;
 
-	}
+    }
 
-	@Bean
-	RouterFunction<ServerResponse> http() {
-		return route()
-				.GET("/greetings",
-						r -> ServerResponse.ok()
-								.body(singletonMap("greeting", "Hello " + r.principal().get().getName() + "!")))
-				.build();
-	}
+    @Bean
+    RouterFunction<ServerResponse> http() {
+        return route()
+                .GET("/greetings", r -> ok().body(singletonMap("greeting", "Hello " + r.principal().get().getName() + "!")))
+                .build();
+    }
 
-	@Bean
-	UserDetailsService authentication() {
-		return new InMemoryUserDetailsManager(
-				User.withDefaultPasswordEncoder().username(USERNAME).password(PASSWORD).roles("USER").build());
-	}
+    @Bean
+    UserDetailsService authentication() {
+        return new InMemoryUserDetailsManager(
+                User.withDefaultPasswordEncoder().username(USERNAME).password(PASSWORD).roles("USER").build());
+    }
 
 }
 
@@ -85,11 +84,11 @@ public class DemoApplication {
 @RequiredArgsConstructor
 class ServletSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	private final JwtProperties properties;
+    private final JwtProperties properties;
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.apply(Jwt.servletJwtDsl(this.properties.getTokenUrl()));
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.apply(Jwt.servletJwtDsl(this.properties.getTokenUrl()));
+    }
 
 }
