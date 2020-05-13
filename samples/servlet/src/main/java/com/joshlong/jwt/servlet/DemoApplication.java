@@ -79,7 +79,9 @@ public class DemoApplication {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests(ae -> ae.anyRequest().authenticated())
+			http
+
+					.authorizeRequests(ae -> ae.anyRequest().authenticated())
 					.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 		}
 

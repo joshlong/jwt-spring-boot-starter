@@ -49,7 +49,7 @@ public class Jwt {
 		@Override
 		public void init(HttpSecurity builder) throws Exception {
 			builder//
-					.csrf(AbstractHttpConfigurer::disable)//
+					.requestMatchers(c -> c.mvcMatchers(this.tokenUrl)).csrf(AbstractHttpConfigurer::disable)//
 					.authorizeRequests(ae -> ae//
 							.mvcMatchers(this.tokenUrl).authenticated()//
 					)//
