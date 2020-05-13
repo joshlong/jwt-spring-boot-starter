@@ -20,20 +20,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.security.Principal;
-import java.util.Map;
+import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.ServerResponse;
 
 import static java.util.Collections.singletonMap;
+import static org.springframework.web.servlet.function.RouterFunctions.route;
 
 @Log4j2
-class WebfluxDemoApplicationTest {
+class ServletDemoApplicationTest {
 
 	@Test
-	public void webflux() {
-		var args = new String[] { "spring.main.web-application-type=servlet" };
+	public void servlet() {
+		// var args = new String[]{"spring.main.web-application-type=servlet"};
+		var args = new String[] {};
 		SpringApplication.run(DemoApplication.class, args);
 		var username = "user";
 		var token = new RestTemplateBuilder()//
@@ -65,11 +64,20 @@ class WebfluxDemoApplicationTest {
 @SpringBootApplication
 class DemoApplication {
 
+	@Bean
+	RouterFunction<ServerResponse> http() {
+		return route()
+				.GET("/greetings",
+						r -> ServerResponse.ok()
+								.body(singletonMap("greeting", "Hello " + r.principal().get().getName() + "!")))
+				.build();
+	}
+
 }
 
 @Configuration
 @RequiredArgsConstructor
-class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+class ServletSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private final JwtProperties properties;
 
@@ -80,18 +88,8 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	UserDetailsService authentication() {
-		var user = User.withDefaultPasswordEncoder().username("user").password("password").roles("USER").build();
-		return new InMemoryUserDetailsManager(user);
-	}
-
-}
-
-@RestController
-class MessageController {
-
-	@GetMapping("/greetings")
-	Map<String, String> greet(Principal principal) {
-		return singletonMap("greeting", "Hello " + principal.getName() + "!");
+		return new InMemoryUserDetailsManager(
+				User.withDefaultPasswordEncoder().username("user").password("password").roles("USER").build());
 	}
 
 }

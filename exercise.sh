@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-username=username
+username=user
 password=password
-token=$(curl -u user:password -X POST http://localhost:8080/token)
-curl -H"Authorization: Bearer $token" http://localhost:8080/greetings
+token=$(curl -u $username:$password -X POST http://localhost:8080/token)
+curl -v -H"Authorization: Bearer $token" http://localhost:8080/greetings
+

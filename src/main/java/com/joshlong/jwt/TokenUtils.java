@@ -17,10 +17,7 @@ abstract class TokenUtils {
 		var claims = new JWTClaimsSet.Builder()//
 				.issuer(properties.getIssuer())//
 				.audience(properties.getAudience())//
-				.expirationTime(Date.from(now.plus(Duration.ofDays(2))))// todo this date
-																		// should be
-																		// configurable
-				.issueTime(Date.from(now))//
+				.expirationTime(Date.from(now.plus(Duration.ofDays(2)))).issueTime(Date.from(now))//
 				.subject(principal.getName())//
 				.build();
 		var jwsObject = new JWSObject(new JWSHeader.Builder(JWSAlgorithm.RS256).build(),

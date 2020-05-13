@@ -1,10 +1,13 @@
 package com.joshlong.jwt;
 
 import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.jwk.RSAKey;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
@@ -18,6 +21,11 @@ import static org.springframework.web.servlet.function.RouterFunctions.route;
 @AutoConfigureAfter(JwtTokenAutoConfiguration.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 class ServletTokenEndpointAutoConfiguration {
+
+	@Bean
+	JwtDecoder jwtDecoder(RSAKey rsaKey) throws Exception {
+		return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+	}
 
 	@Bean
 	RouterFunction<ServerResponse> jwtTokenServletEndpoint(JwtProperties properties, JWSSigner signer) {
