@@ -38,18 +38,20 @@ class Credentials {
 @Log4j2
 class ReactiveDemoApplicationTest {
 
-	@RequiredArgsConstructor
-	static class TokenExchangeFilterFunction implements ExchangeFilterFunction {
-
-		private final Mono<String> token;
-
-		@Override
-		public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-			return this.token.flatMap(t -> next.exchange(ClientRequest.from(request)
-					.headers((headers) -> headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + t)).build()));
-		}
-
-	}
+	/*
+	 *
+	 * @RequiredArgsConstructor static class TokenExchangeFilterFunction implements
+	 * ExchangeFilterFunction {
+	 *
+	 * private final Mono<String> token;
+	 *
+	 * @Override public Mono<ClientResponse> filter(ClientRequest request,
+	 * ExchangeFunction next) { return this.token.flatMap(t ->
+	 * next.exchange(ClientRequest.from(request) .headers((headers) ->
+	 * headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + t)).build())); }
+	 *
+	 * }
+	 */
 
 	@Test
 	public void reactive() throws Exception {
