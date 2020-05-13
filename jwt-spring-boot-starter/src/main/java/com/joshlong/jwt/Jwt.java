@@ -22,21 +22,11 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
  */
 public class Jwt {
 
-	private static final String DEFAULT_TOKEN_URL = "/token";
-
-	public static ServerHttpSecurity webfluxDsl(ServerHttpSecurity builder) {
-		return webfluxDsl(builder, DEFAULT_TOKEN_URL);
-	}
-
 	public static ServerHttpSecurity webfluxDsl(ServerHttpSecurity builder, String tokenUrl) {
 		return builder.securityMatcher(new PathPatternParserServerWebExchangeMatcher(tokenUrl))
 				.csrf(ServerHttpSecurity.CsrfSpec::disable).authorizeExchange(ae -> ae.anyExchange().authenticated())//
 				.httpBasic(Customizer.withDefaults());
 
-	}
-
-	public static ServletJwtDsl servletJwtDsl() {
-		return new ServletJwtDsl().tokenUrl(DEFAULT_TOKEN_URL);
 	}
 
 	public static ServletJwtDsl servletJwtDsl(String loginUrl) {
