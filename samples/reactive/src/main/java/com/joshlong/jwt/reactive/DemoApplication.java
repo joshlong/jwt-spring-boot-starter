@@ -1,6 +1,7 @@
 package com.joshlong.jwt.reactive;
 
 import com.joshlong.jwt.Jwt;
+import com.joshlong.jwt.JwtProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,12 +22,11 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static java.util.Collections.singletonMap;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
-import static org.springframework.web.reactive.function.server.ServerResponse.*;
+import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @Log4j2
 @SpringBootApplication
@@ -89,8 +89,8 @@ class DemoApplication {
 	}
 
 	@Bean
-	SecurityWebFilterChain authorization(ServerHttpSecurity httpSecurity) {
-		return Jwt.webfluxDsl(httpSecurity).build();
+	SecurityWebFilterChain authorization(JwtProperties properties, ServerHttpSecurity httpSecurity) {
+		return Jwt.webfluxDsl(httpSecurity, properties.getTokenUrl()).build();
 	}
 
 }

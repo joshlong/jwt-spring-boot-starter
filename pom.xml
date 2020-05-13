@@ -22,7 +22,6 @@
     </modules>
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.jfrog.buildinfo</groupId>
                 <artifactId>artifactory-maven-plugin</artifactId>
