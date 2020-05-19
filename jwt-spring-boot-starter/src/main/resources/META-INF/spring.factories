@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.joshlong.jwt.JwtTokenAutoConfiguration,\
-  com.joshlong.jwt.ServletTokenEndpointAutoConfiguration,\
+  com.joshlong.jwt.WebmvcTokenEndpointAutoConfiguration,\
   com.joshlong.jwt.WebfluxTokenEndpointAutoConfiguration
