@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
@@ -31,6 +32,7 @@ class WebfluxTokenEndpointAutoConfiguration {
 	}
 
 	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	SecurityWebFilterChain configureAuthenticationForTokenEndpoint(JwtProperties properties,
 			ServerHttpSecurity httpSecurity) {
 		return Jwt.webfluxDsl(httpSecurity, properties.getTokenUrl()).build();
