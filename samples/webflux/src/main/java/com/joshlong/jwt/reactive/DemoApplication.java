@@ -34,9 +34,10 @@ class DemoApplication {
 		SpringApplication.run(DemoApplication.class, args);
 	}
 
-	@EventListener(ApplicationReadyEvent.class)
-	public void reactive() {
-
+	// todo
+	// @EventListener(ApplicationReadyEvent.class)
+	public void reactive() throws Exception {
+		Thread.sleep(1000);
 		Mono<String> token = WebClient //
 				.builder()//
 				.filter(ExchangeFilterFunctions.basicAuthentication(USERNAME, PASSWORD))//
@@ -83,7 +84,8 @@ class DemoApplication {
 
 	@Bean
 	SecurityWebFilterChain authorization(ServerHttpSecurity httpSecurity) {
-		return httpSecurity.authorizeExchange(ae -> ae.anyExchange().authenticated())//
+		return httpSecurity//
+				.authorizeExchange(ae -> ae.anyExchange().authenticated())//
 				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)//
 				.build();
 	}

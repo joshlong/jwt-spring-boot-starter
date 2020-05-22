@@ -23,26 +23,23 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
 public class Jwt {
 
 	public static ServerHttpSecurity webfluxDsl(ServerHttpSecurity builder, String tokenUrl) {
-		return builder.securityMatcher(new PathPatternParserServerWebExchangeMatcher(tokenUrl))
-				.csrf(ServerHttpSecurity.CsrfSpec::disable).authorizeExchange(ae -> ae.anyExchange().authenticated())//
+		return builder//
+				.securityMatcher(new PathPatternParserServerWebExchangeMatcher(tokenUrl))//
+				.csrf(ServerHttpSecurity.CsrfSpec::disable)//
+				.authorizeExchange(ae -> ae.anyExchange().authenticated())//
 				.httpBasic(Customizer.withDefaults());
 
 	}
 
-	@Deprecated
-	public static ServletJwtDsl webmvcJwtDsl(String loginUrl) {
-		return new ServletJwtDsl().tokenUrl(loginUrl);
+	public static WebmvcDsl webmvcDsl(String loginUrl) {
+		return new WebmvcDsl().tokenUrl(loginUrl);
 	}
 
-	public static ServletJwtDsl servletJwtDsl(String loginUrl) {
-		return webmvcJwtDsl(loginUrl);
-	}
-
-	public static class ServletJwtDsl extends AbstractHttpConfigurer<ServletJwtDsl, HttpSecurity> {
+	public static class WebmvcDsl extends AbstractHttpConfigurer<WebmvcDsl, HttpSecurity> {
 
 		private String tokenUrl;
 
-		public ServletJwtDsl tokenUrl(String url) {
+		public WebmvcDsl tokenUrl(String url) {
 			this.tokenUrl = url;
 			return this;
 		}

@@ -53,7 +53,7 @@ class WebmvcTokenEndpointAutoConfiguration {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.apply(Jwt.servletJwtDsl(this.properties.getTokenUrl()));
+			http.apply(Jwt.webmvcDsl(this.properties.getTokenUrl()));
 		}
 
 	}
