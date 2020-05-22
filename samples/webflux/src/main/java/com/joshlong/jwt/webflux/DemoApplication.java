@@ -1,4 +1,4 @@
-package com.joshlong.jwt.reactive;
+package com.joshlong.jwt.webflux;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,7 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
@@ -18,8 +21,9 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.function.Predicate;
+
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
-import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @Log4j2
 @SpringBootApplication
@@ -33,40 +37,49 @@ class DemoApplication {
 	}
 
 	// todo
-	// @EventListener(ApplicationReadyEvent.class)
-	public void reactive() throws Exception {
-		Thread.sleep(1000);
-		Mono<String> token = WebClient //
+	@EventListener(ApplicationReadyEvent.class)
+	public void reactiveRunner() throws Exception {
+		var root = "http://localhost:8080";
+
+		WebClient //
 				.builder()//
 				.filter(ExchangeFilterFunctions.basicAuthentication(USERNAME, PASSWORD))//
 				.build()//
 				.post()//
-				.uri("http://localhost:8080/token")//
+				.uri(root + "/token")//
 				.retrieve()//
-				.bodyToMono(String.class);
-
-		Mono<String> greetingPublisher = token//
-				.flatMap(tokenString -> WebClient//
+				.bodyToMono(String.class).flatMap(tokenString -> WebClient//
 						.builder()//
 						.build()//
 						.get()//
-						.uri("http://localhost:8080/greetings")//
+						.uri(root + "/greetings")//
 						.headers(httpHeaders -> httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString))//
 						.retrieve()//
-						.bodyToMono(String.class));
-		greetingPublisher.subscribe(log::info);
-
+						.bodyToMono(String.class))
+				.doOnError(log::error).onErrorReturn(new Predicate<Throwable>() {
+					@Override
+					public boolean test(Throwable throwable) {
+						log.info(throwable.toString());
+						return true;
+					}
+				}, "NOPE!").subscribe(response -> log.info("the response is " + response));
 	}
 
 	@Bean
 	RouterFunction<ServerResponse> myHttpEndpoints() {
 		return route()//
-				.GET("/greetings", request -> request//
-						.principal()//
-						.flatMap(p -> {//
-							var greeting = new Greeting("hello " + p.getName() + "!");
-							return ok().body(Mono.just(greeting), Greeting.class);
-						}))//
+				.GET("/greetings", request -> {
+					log.info("returning the request " + request);
+					return request//
+							.principal()//
+							.map(p -> {//
+								log.info("greetings requested : " + p.getName());
+								return new Greeting("hello " + p.getName() + "!");
+							}).onErrorResume(ex -> Mono.just(new Greeting("NOOOO")))
+							.flatMap(g -> ServerResponse.ok().body(g, Greeting.class))
+							.switchIfEmpty(Mono.error(new IllegalAccessError()));
+
+				})//
 				.build();
 	}
 
@@ -81,9 +94,10 @@ class DemoApplication {
 	}
 
 	@Bean
-	SecurityWebFilterChain authorization1(ServerHttpSecurity httpSecurity) {
+	SecurityWebFilterChain authorization(ServerHttpSecurity httpSecurity) {
 		return httpSecurity//
-				.authorizeExchange(ae -> ae.anyExchange().authenticated())//
+				// .authorizeExchange(ae ->
+				// ae.pathMatchers("/greetings").authenticated())//
 				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)//
 				.build();
 	}

@@ -1,5 +1,6 @@
 package com.joshlong.jwt;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,7 +13,7 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
  * "https://docs.spring.io/spring-security/site/docs/5.4.0-M1/reference/html5/#jc-custom-dsls">
  * in JWT configuration for Servlet-based </a> or Spring Webflux-based applications.
  * </P>
- *
+ * <p>
  * Most of this code works because I stole code, time and ideas from Spring Security team
  * members Rob Winch and Josh Cummings. <EM>Thank you!</EM>
  *
@@ -20,13 +21,15 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
  * @author Josh Long
  * @author Josh Cummings
  */
+@Log4j2
 public class Jwt {
 
 	public static ServerHttpSecurity webfluxDsl(ServerHttpSecurity builder, String tokenUrl) {
+		log.info("configuring for " + tokenUrl);
 		return builder//
 				.securityMatcher(new PathPatternParserServerWebExchangeMatcher(tokenUrl))//
 				.csrf(ServerHttpSecurity.CsrfSpec::disable)//
-				.authorizeExchange(ae -> ae.anyExchange().authenticated())//
+				.authorizeExchange(ae -> ae.pathMatchers(tokenUrl).authenticated())//
 				.httpBasic(Customizer.withDefaults());
 
 	}
@@ -47,10 +50,9 @@ public class Jwt {
 		@Override
 		public void init(HttpSecurity builder) throws Exception {
 			builder//
-					.requestMatchers(c -> c.mvcMatchers(this.tokenUrl)).csrf(AbstractHttpConfigurer::disable)//
-					.authorizeRequests(ae -> ae//
-							.mvcMatchers(this.tokenUrl).authenticated()//
-					)//
+					.requestMatchers(c -> c.mvcMatchers(this.tokenUrl))//
+					.csrf(AbstractHttpConfigurer::disable)//
+					.authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())//
 					.httpBasic(Customizer.withDefaults())//
 			;
 		}
