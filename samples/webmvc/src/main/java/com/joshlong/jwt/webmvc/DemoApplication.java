@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
@@ -77,9 +78,7 @@ public class DemoApplication {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http
-
-					.authorizeRequests(ae -> ae.anyRequest().authenticated())
+			http.cors(Customizer.withDefaults()).authorizeRequests(ae -> ae.anyRequest().authenticated())
 					.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 		}
 

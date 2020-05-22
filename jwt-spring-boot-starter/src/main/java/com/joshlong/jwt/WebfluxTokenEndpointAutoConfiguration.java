@@ -1,7 +1,5 @@
 package com.joshlong.jwt;
 
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.jwk.RSAKey;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -16,6 +14,8 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.jwk.RSAKey;
 
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -44,18 +44,19 @@ class WebfluxTokenEndpointAutoConfiguration {
 		if (log.isDebugEnabled()) {
 			log.debug("configuring the JWT token endpoint as '" + properties.getTokenUrl().trim() + "'");
 		}
-		return route().POST(properties.getTokenUrl().trim(), request -> request//
-				.principal()//
-				.flatMap(principal -> {//
-					Mono<String> tokenMono = Mono.fromCallable(() -> {
-						var tokenFor = TokenUtils.buildTokenFor(properties, signer, principal);
-						if (log.isDebugEnabled()) {
-							log.debug("the resulting token is " + tokenFor);
-						}
-						return tokenFor;
-					}).subscribeOn(scheduler);
-					return ServerResponse.ok().body(tokenMono, String.class);
-				}))//
+		return route()//
+				.POST(properties.getTokenUrl().trim(), request -> request//
+						.principal()//
+						.flatMap(principal -> {//
+							Mono<String> tokenMono = Mono.fromCallable(() -> {
+								var tokenFor = TokenUtils.buildTokenFor(properties, signer, principal);
+								if (log.isDebugEnabled()) {
+									log.debug("the resulting token is " + tokenFor);
+								}
+								return tokenFor;
+							}).subscribeOn(scheduler);
+							return ServerResponse.ok().body(tokenMono, String.class);
+						}))//
 				.build();
 	}
 

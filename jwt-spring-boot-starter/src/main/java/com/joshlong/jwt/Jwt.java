@@ -28,6 +28,7 @@ public class Jwt {
 		log.info("configuring for " + tokenUrl);
 		return builder//
 				.securityMatcher(new PathPatternParserServerWebExchangeMatcher(tokenUrl))//
+				.cors(Customizer.withDefaults())//
 				.csrf(ServerHttpSecurity.CsrfSpec::disable)//
 				.authorizeExchange(ae -> ae.pathMatchers(tokenUrl).authenticated())//
 				.httpBasic(Customizer.withDefaults());
@@ -52,6 +53,7 @@ public class Jwt {
 			builder//
 					.requestMatchers(c -> c.mvcMatchers(this.tokenUrl))//
 					.csrf(AbstractHttpConfigurer::disable)//
+					.cors(Customizer.withDefaults())//
 					.authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())//
 					.httpBasic(Customizer.withDefaults())//
 			;

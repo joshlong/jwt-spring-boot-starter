@@ -26,77 +26,77 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @SpringBootApplication
 class DemoApplication {
 
-    static final String USERNAME = "user";
-    static final String PASSWORD = "password";
+	static final String USERNAME = "user";
+	static final String PASSWORD = "password";
 
-    public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+	}
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void reactiveRunner() throws Exception {
-        var root = "http://localhost:8080";
-        WebClient //
-                .builder()//
-                .filter(ExchangeFilterFunctions.basicAuthentication(USERNAME, PASSWORD))//
-                .build()//
-                .post()//
-                .uri(root + "/token")//
-                .retrieve()//
-                .bodyToMono(String.class).flatMap(tokenString -> WebClient//
-                .builder()//
-                .build()//
-                .get()//
-                .uri(root + "/greetings")//
-                .headers(httpHeaders -> httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString))//
-                .retrieve()//
-                .bodyToMono(String.class))
-                .subscribe(response -> log.info("the response is " + response));
-    }
+	@EventListener(ApplicationReadyEvent.class)
+	public void reactiveRunner() throws Exception {
+		var root = "http://localhost:8080";
+		WebClient //
+				.builder()//
+				.filter(ExchangeFilterFunctions.basicAuthentication(USERNAME, PASSWORD))//
+				.build()//
+				.post()//
+				.uri(root + "/token")//
+				.retrieve()//
+				.bodyToMono(String.class).flatMap(tokenString -> WebClient//
+						.builder()//
+						.build()//
+						.get()//
+						.uri(root + "/greetings")//
+						.headers(httpHeaders -> httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString))//
+						.retrieve()//
+						.bodyToMono(String.class))
+				.subscribe(response -> log.info("the response is " + response));
+	}
 
-    @Bean
-    RouterFunction<ServerResponse> myHttpEndpoints() {
-        return route()//
-                .GET("/greetings", request -> {
-                    log.info("returning the request " + request);
-                    return request//
-                            .principal()//
-                            .map(p -> {//
-                                log.info("greetings requested : " + p.getName());
-                                return new Greeting("hello " + p.getName() + "!");
-                            }).onErrorResume(ex -> Mono.just(new Greeting("NOOOO")))
-                            .flatMap(g -> ServerResponse.ok().bodyValue(g))
-                            .switchIfEmpty(Mono.error(new IllegalAccessError()));
+	@Bean
+	RouterFunction<ServerResponse> myHttpEndpoints() {
+		return route()//
+				.GET("/greetings", request -> {
+					log.info("returning the request " + request);
+					return request//
+							.principal()//
+							.map(p -> {//
+								log.info("greetings requested : " + p.getName());
+								return new Greeting("hello " + p.getName() + "!");
+							}).onErrorResume(ex -> Mono.just(new Greeting("NOOOO")))
+							.flatMap(g -> ServerResponse.ok().bodyValue(g))
+							.switchIfEmpty(Mono.error(new IllegalAccessError()));
 
-                })//
-                .build();
-    }
+				})//
+				.build();
+	}
 
-    @Bean
-    MapReactiveUserDetailsService authentication1() {
-        return new MapReactiveUserDetailsService(User.withDefaultPasswordEncoder()//
-                .username(USERNAME)//
-                .password(PASSWORD)//
-                .roles("USER")//
-                .build()//
-        );
-    }
+	@Bean
+	MapReactiveUserDetailsService authentication1() {
+		return new MapReactiveUserDetailsService(User.withDefaultPasswordEncoder()//
+				.username(USERNAME)//
+				.password(PASSWORD)//
+				.roles("USER")//
+				.build()//
+		);
+	}
 
-    @Bean
-    SecurityWebFilterChain authorization(ServerHttpSecurity httpSecurity) {
-        return httpSecurity//
-                .authorizeExchange(ae -> ae.anyExchange().authenticated())
-                .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)//
-                .build();
-    }
+	@Bean
+	SecurityWebFilterChain authorization(ServerHttpSecurity httpSecurity) {
+		return httpSecurity//
+				.authorizeExchange(ae -> ae.anyExchange().authenticated())
+				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)//
+				.build();
+	}
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    static class Greeting {
+	@Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	static class Greeting {
 
-        private String greeting;
+		private String greeting;
 
-    }
+	}
 
 }
