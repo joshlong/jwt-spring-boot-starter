@@ -35,10 +35,10 @@ class WebfluxTokenEndpointAutoConfiguration {
 	}
 
 	@Bean
-	RouterFunction<ServerResponse> jwtTokenWebfluxEndpointZ(JwtProperties properties, JWSSigner signer) {
+	RouterFunction<ServerResponse> myJwtTokenWebfluxEndpoint(JwtProperties properties, JWSSigner signer) {
 		var scheduler = Schedulers.boundedElastic();
-		log.debug("the token URL is " + properties.getTokenUrl());
-		return route()//
+		log.info("configuring the JWT token endpoint");
+		return route().GET("/huh", r -> ServerResponse.ok().bodyValue("Test"))
 				.POST(properties.getTokenUrl().trim(), request -> request.principal()//
 						.flatMap(principal -> {//
 							Mono<String> tokenMono = Mono

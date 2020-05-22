@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
@@ -61,7 +59,7 @@ class DemoApplication {
 	}
 
 	@Bean
-	RouterFunction<ServerResponse> http() {
+	RouterFunction<ServerResponse> myHttpEndpoints() {
 		return route()//
 				.GET("/greetings", request -> request//
 						.principal()//
@@ -73,7 +71,7 @@ class DemoApplication {
 	}
 
 	@Bean
-	MapReactiveUserDetailsService authentication() {
+	MapReactiveUserDetailsService authentication1() {
 		return new MapReactiveUserDetailsService(User.withDefaultPasswordEncoder()//
 				.username(USERNAME)//
 				.password(PASSWORD)//
@@ -83,7 +81,7 @@ class DemoApplication {
 	}
 
 	@Bean
-	SecurityWebFilterChain authorization(ServerHttpSecurity httpSecurity) {
+	SecurityWebFilterChain authorization1(ServerHttpSecurity httpSecurity) {
 		return httpSecurity//
 				.authorizeExchange(ae -> ae.anyExchange().authenticated())//
 				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)//

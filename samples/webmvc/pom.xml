@@ -8,7 +8,7 @@
         <artifactId>samples</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
-    <artifactId>servlet</artifactId>
+    <artifactId>webmvc</artifactId>
     <properties>
         <java.version>11</java.version>
     </properties>
@@ -30,7 +30,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
