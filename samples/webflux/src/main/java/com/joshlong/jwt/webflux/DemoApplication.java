@@ -76,7 +76,7 @@ class DemoApplication {
 								log.info("greetings requested : " + p.getName());
 								return new Greeting("hello " + p.getName() + "!");
 							}).onErrorResume(ex -> Mono.just(new Greeting("NOOOO")))
-							.flatMap(g -> ServerResponse.ok().body(g, Greeting.class))
+							.flatMap(g -> ServerResponse.ok().bodyValue(g))
 							.switchIfEmpty(Mono.error(new IllegalAccessError()));
 
 				})//
