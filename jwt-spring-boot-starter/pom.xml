@@ -13,9 +13,9 @@
         <version>0.0.3-SNAPSHOT</version>
     </parent>
 
-    <properties>        <java.version>17</java.version>
-
-        <oauth2-oidc-sdk.version>8.3</oauth2-oidc-sdk.version>
+    <properties>
+        <java.version>17</java.version>
+<!--        <oauth2-oidc-sdk.version>8.3</oauth2-oidc-sdk.version>-->
     </properties>
 
     <dependencies>
@@ -27,11 +27,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
-        <dependency>
+   <!--     <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>oauth2-oidc-sdk</artifactId>
-            <version>${oauth2-oidc-sdk.version}</version>
-        </dependency>
+&lt;!&ndash;            <version>${oauth2-oidc-sdk.version}</version>&ndash;&gt;
+        </dependency>-->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
@@ -75,7 +75,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.jfrog.buildinfo</groupId>
                 <artifactId>artifactory-maven-plugin</artifactId>
@@ -107,8 +106,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-
             <plugin>
                 <groupId>io.spring.javaformat</groupId>
                 <artifactId>spring-javaformat-maven-plugin</artifactId>

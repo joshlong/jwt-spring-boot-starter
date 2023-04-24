@@ -1,6 +1,8 @@
 package com.joshlong.jwt;
 
-import lombok.extern.log4j.Log4j2;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.jwk.RSAKey;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -14,12 +16,10 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.jwk.RSAKey;
 
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
-@Log4j2
+@Slf4j
 @Order(99)
 @Configuration
 @AutoConfigureAfter(JwtTokenAutoConfiguration.class)
