@@ -45,19 +45,19 @@ class WebfluxTokenEndpointAutoConfiguration {
 			log.debug("configuring the JWT token endpoint as '" + properties.getTokenUrl().trim() + "'");
 		}
 		return route()//
-				.POST(properties.getTokenUrl().trim(), request -> request//
-						.principal()//
-						.flatMap(principal -> {//
-							Mono<String> tokenMono = Mono.fromCallable(() -> {
-								var tokenFor = TokenUtils.buildTokenFor(properties, signer, principal);
-								if (log.isDebugEnabled()) {
-									log.debug("the resulting token is " + tokenFor);
-								}
-								return tokenFor;
-							}).subscribeOn(scheduler);
-							return ServerResponse.ok().body(tokenMono, String.class);
-						}))//
-				.build();
+			.POST(properties.getTokenUrl().trim(), request -> request//
+				.principal()//
+				.flatMap(principal -> {//
+					Mono<String> tokenMono = Mono.fromCallable(() -> {
+						var tokenFor = TokenUtils.buildTokenFor(properties, signer, principal);
+						if (log.isDebugEnabled()) {
+							log.debug("the resulting token is " + tokenFor);
+						}
+						return tokenFor;
+					}).subscribeOn(scheduler);
+					return ServerResponse.ok().body(tokenMono, String.class);
+				}))//
+			.build();
 	}
 
 }

@@ -40,15 +40,15 @@ public class DemoApplication {
 	@EventListener(ApplicationReadyEvent.class)
 	public void servlet() {
 		var token = new RestTemplateBuilder()//
-				.basicAuthentication(USERNAME, PASSWORD)//
-				.build()//
-				.postForEntity("http://localhost:8080/token", null, String.class)//
-				.getBody();
+			.basicAuthentication(USERNAME, PASSWORD)//
+			.build()//
+			.postForEntity("http://localhost:8080/token", null, String.class)//
+			.getBody();
 		var response = new RestTemplateBuilder()//
-				.defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token)//
-				.build()//
-				.getForEntity("http://localhost:8080/greetings", Greeting.class)//
-				.getBody();
+			.defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token)//
+			.build()//
+			.getForEntity("http://localhost:8080/greetings", Greeting.class)//
+			.getBody();
 		log.info("token: " + token);
 		log.info("response: " + response);
 		Assert.isTrue(response.getGreeting().equalsIgnoreCase("Hello " + USERNAME + "!"), "the strings must match!");
@@ -66,10 +66,10 @@ public class DemoApplication {
 	@Bean
 	UserDetailsService authentication() {
 		return new InMemoryUserDetailsManager(User.withDefaultPasswordEncoder()//
-				.username(USERNAME)//
-				.password(PASSWORD)//
-				.roles("USER")//
-				.build()//
+			.username(USERNAME)//
+			.password(PASSWORD)//
+			.roles("USER")//
+			.build()//
 		);
 	}
 
@@ -78,8 +78,9 @@ public class DemoApplication {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.cors(Customizer.withDefaults()).authorizeRequests(ae -> ae.anyRequest().authenticated())
-					.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+			http.cors(Customizer.withDefaults())
+				.authorizeRequests(ae -> ae.anyRequest().authenticated())
+				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 		}
 
 	}

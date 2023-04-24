@@ -27,11 +27,11 @@ public class Jwt {
 	public static ServerHttpSecurity webfluxDsl(ServerHttpSecurity builder, String tokenUrl) {
 		log.info("configuring for " + tokenUrl);
 		return builder//
-				.securityMatcher(new PathPatternParserServerWebExchangeMatcher(tokenUrl))//
-				.cors(Customizer.withDefaults())//
-				.csrf(ServerHttpSecurity.CsrfSpec::disable)//
-				.authorizeExchange(ae -> ae.pathMatchers(tokenUrl).authenticated())//
-				.httpBasic(Customizer.withDefaults());
+			.securityMatcher(new PathPatternParserServerWebExchangeMatcher(tokenUrl))//
+			.cors(Customizer.withDefaults())//
+			.csrf(ServerHttpSecurity.CsrfSpec::disable)//
+			.authorizeExchange(ae -> ae.pathMatchers(tokenUrl).authenticated())//
+			.httpBasic(Customizer.withDefaults());
 
 	}
 
@@ -51,11 +51,11 @@ public class Jwt {
 		@Override
 		public void init(HttpSecurity builder) throws Exception {
 			builder//
-					.requestMatchers(c -> c.mvcMatchers(this.tokenUrl))//
-					.csrf(AbstractHttpConfigurer::disable)//
-					.cors(Customizer.withDefaults())//
-					.authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())//
-					.httpBasic(Customizer.withDefaults())//
+				.requestMatchers(c -> c.mvcMatchers(this.tokenUrl))//
+				.csrf(AbstractHttpConfigurer::disable)//
+				.cors(Customizer.withDefaults())//
+				.authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())//
+				.httpBasic(Customizer.withDefaults())//
 			;
 		}
 

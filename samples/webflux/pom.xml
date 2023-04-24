@@ -6,11 +6,11 @@
     <parent>
         <groupId>com.joshlong.jwt</groupId>
         <artifactId>samples</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
     <artifactId>webflux</artifactId>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
         <dependency>

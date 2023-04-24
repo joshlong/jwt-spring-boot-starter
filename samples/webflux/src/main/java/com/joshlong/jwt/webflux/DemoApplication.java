@@ -37,57 +37,59 @@ class DemoApplication {
 	public void reactiveRunner() throws Exception {
 		var root = "http://localhost:8080";
 		WebClient //
+			.builder()//
+			.filter(ExchangeFilterFunctions.basicAuthentication(USERNAME, PASSWORD))//
+			.build()//
+			.post()//
+			.uri(root + "/token")//
+			.retrieve()//
+			.bodyToMono(String.class)
+			.flatMap(tokenString -> WebClient//
 				.builder()//
-				.filter(ExchangeFilterFunctions.basicAuthentication(USERNAME, PASSWORD))//
 				.build()//
-				.post()//
-				.uri(root + "/token")//
+				.get()//
+				.uri(root + "/greetings")//
+				.headers(httpHeaders -> httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString))//
 				.retrieve()//
-				.bodyToMono(String.class).flatMap(tokenString -> WebClient//
-						.builder()//
-						.build()//
-						.get()//
-						.uri(root + "/greetings")//
-						.headers(httpHeaders -> httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString))//
-						.retrieve()//
-						.bodyToMono(String.class))
-				.subscribe(response -> log.info("the response is " + response));
+				.bodyToMono(String.class))
+			.subscribe(response -> log.info("the response is " + response));
 	}
 
 	@Bean
 	RouterFunction<ServerResponse> myHttpEndpoints() {
 		return route()//
-				.GET("/greetings", request -> {
-					log.info("returning the request " + request);
-					return request//
-							.principal()//
-							.map(p -> {//
-								log.info("greetings requested : " + p.getName());
-								return new Greeting("hello " + p.getName() + "!");
-							}).onErrorResume(ex -> Mono.just(new Greeting("NOOOO")))
-							.flatMap(g -> ServerResponse.ok().bodyValue(g))
-							.switchIfEmpty(Mono.error(new IllegalAccessError()));
+			.GET("/greetings", request -> {
+				log.info("returning the request " + request);
+				return request//
+					.principal()//
+					.map(p -> {//
+						log.info("greetings requested : " + p.getName());
+						return new Greeting("hello " + p.getName() + "!");
+					})
+					.onErrorResume(ex -> Mono.just(new Greeting("NOOOO")))
+					.flatMap(g -> ServerResponse.ok().bodyValue(g))
+					.switchIfEmpty(Mono.error(new IllegalAccessError()));
 
-				})//
-				.build();
+			})//
+			.build();
 	}
 
 	@Bean
 	MapReactiveUserDetailsService authentication1() {
 		return new MapReactiveUserDetailsService(User.withDefaultPasswordEncoder()//
-				.username(USERNAME)//
-				.password(PASSWORD)//
-				.roles("USER")//
-				.build()//
+			.username(USERNAME)//
+			.password(PASSWORD)//
+			.roles("USER")//
+			.build()//
 		);
 	}
 
 	@Bean
 	SecurityWebFilterChain authorization(ServerHttpSecurity httpSecurity) {
 		return httpSecurity//
-				.authorizeExchange(ae -> ae.anyExchange().authenticated())
-				.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)//
-				.build();
+			.authorizeExchange(ae -> ae.anyExchange().authenticated())
+			.oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)//
+			.build();
 	}
 
 	@Data

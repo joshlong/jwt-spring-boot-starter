@@ -34,13 +34,13 @@ class WebmvcTokenEndpointAutoConfiguration {
 	@Bean
 	RouterFunction<ServerResponse> jwtTokenServletEndpoint(JwtProperties properties, JWSSigner signer) {
 		return route()//
-				.POST(properties.getTokenUrl(), serverRequest -> {
-					Optional<Principal> pp = serverRequest.principal();
-					Assert.isTrue(pp.isPresent(), "the principal must be non-null!");
-					var token = TokenUtils.buildTokenFor(properties, signer, pp.get());
-					return ServerResponse.ok().body(token);
-				})//
-				.build();
+			.POST(properties.getTokenUrl(), serverRequest -> {
+				Optional<Principal> pp = serverRequest.principal();
+				Assert.isTrue(pp.isPresent(), "the principal must be non-null!");
+				var token = TokenUtils.buildTokenFor(properties, signer, pp.get());
+				return ServerResponse.ok().body(token);
+			})//
+			.build();
 	}
 
 	@Configuration
