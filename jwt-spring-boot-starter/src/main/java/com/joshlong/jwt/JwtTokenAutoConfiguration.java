@@ -4,7 +4,8 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
-import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,12 @@ import java.util.UUID;
  * @author Rob Winch
  * @author Josh Long
  */
-@Log4j2
+
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
 class JwtTokenAutoConfiguration {
+
+	private final static Logger log = LoggerFactory.getLogger(JwtTokenAutoConfiguration.class);
 
 	@Bean
 	RSAKey rsaKey(JwtProperties properties) throws Exception {

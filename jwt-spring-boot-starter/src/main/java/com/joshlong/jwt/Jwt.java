@@ -1,6 +1,7 @@
 package com.joshlong.jwt;
 
-import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,8 +22,10 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
  * @author Josh Long
  * @author Josh Cummings
  */
-@Log4j2
+
 public class Jwt {
+
+	private final static Logger log = LoggerFactory.getLogger(Jwt.class);
 
 	public static ServerHttpSecurity webfluxDsl(ServerHttpSecurity builder, String tokenUrl) {
 		log.info("configuring for " + tokenUrl);
@@ -35,30 +38,30 @@ public class Jwt {
 
 	}
 
-	public static WebmvcDsl webmvcDsl(String loginUrl) {
-		return new WebmvcDsl().tokenUrl(loginUrl);
-	}
-
-	public static class WebmvcDsl extends AbstractHttpConfigurer<WebmvcDsl, HttpSecurity> {
-
-		private String tokenUrl;
-
-		public WebmvcDsl tokenUrl(String url) {
-			this.tokenUrl = url;
-			return this;
-		}
-
-		@Override
-		public void init(HttpSecurity builder) throws Exception {
-			builder//
-				.requestMatchers(c -> c.mvcMatchers(this.tokenUrl))//
-				.csrf(AbstractHttpConfigurer::disable)//
-				.cors(Customizer.withDefaults())//
-				.authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())//
-				.httpBasic(Customizer.withDefaults())//
-			;
-		}
-
-	}
+	/*
+	 * public static WebmvcDsl webmvcDsl(String loginUrl) { return new
+	 * WebmvcDsl().tokenUrl(loginUrl); }
+	 *
+	 * public static class WebmvcDsl extends AbstractHttpConfigurer<WebmvcDsl,
+	 * HttpSecurity> {
+	 *
+	 * private String tokenUrl;
+	 *
+	 * public WebmvcDsl tokenUrl(String url) { this.tokenUrl = url; return this; }
+	 *
+	 * @Override public void init(HttpSecurity builder) throws Exception { builder
+	 * .securityMatcher( )
+	 *//*
+		 * builder//
+		 *
+		 * .requestMatchers(c -> c.mvcMatchers(this.tokenUrl))//
+		 * .csrf(AbstractHttpConfigurer::disable)// .cors(Customizer.withDefaults())//
+		 * .authorizeRequests(ae -> ae.mvcMatchers(this.tokenUrl).authenticated())//
+		 * .httpBasic(Customizer.withDefaults())//
+		 *//*
+			 * ; }
+			 *
+			 * }
+			 */
 
 }

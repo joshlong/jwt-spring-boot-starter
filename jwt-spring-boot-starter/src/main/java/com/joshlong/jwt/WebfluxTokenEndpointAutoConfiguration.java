@@ -2,7 +2,8 @@ package com.joshlong.jwt;
 
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.jwk.RSAKey;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -19,12 +20,13 @@ import reactor.core.scheduler.Schedulers;
 
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
-@Slf4j
 @Order(99)
 @Configuration
 @AutoConfigureAfter(JwtTokenAutoConfiguration.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 class WebfluxTokenEndpointAutoConfiguration {
+
+	private final static Logger log = LoggerFactory.getLogger(WebfluxTokenEndpointAutoConfiguration.class);
 
 	@Bean
 	NimbusReactiveJwtDecoder reactiveJwtDecoder(RSAKey rsaKey) throws Exception {
@@ -48,7 +50,7 @@ class WebfluxTokenEndpointAutoConfiguration {
 			.POST(properties.getTokenUrl().trim(), request -> request//
 				.principal()//
 				.flatMap(principal -> {//
-					Mono<String> tokenMono = Mono.fromCallable(() -> {
+					var tokenMono = Mono.fromCallable(() -> {
 						var tokenFor = TokenUtils.buildTokenFor(properties, signer, principal);
 						if (log.isDebugEnabled()) {
 							log.debug("the resulting token is " + tokenFor);
