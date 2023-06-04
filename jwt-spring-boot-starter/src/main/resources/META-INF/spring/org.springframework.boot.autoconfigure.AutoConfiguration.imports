@@ -1,0 +1,3 @@
+com.joshlong.jwt.JwtTokenAutoConfiguration
+com.joshlong.jwt.WebmvcTokenEndpointAutoConfiguration
+com.joshlong.jwt.WebfluxTokenEndpointAutoConfiguration
